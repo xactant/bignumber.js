@@ -2,6 +2,8 @@
 
 [![Build Status](https://secure.travis-ci.org/alexbardas/bignumber.js.png)](http://travis-ci.org/alexbardas/bignumber.js)
 
+Forked from alexbardas/bignumber.js to add handling for binary operators
+
 BigNumber.js is a light javascript library for node.js and the browser. It supports arithmetic operations on Big Integers.
 
 It is build with performance in mind, uses the fastest algorithms and supports all basic arithmetic operations
