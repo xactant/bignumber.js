@@ -6,6 +6,9 @@
  * It supports the following operations:
  *      addition, subtraction, multiplication, division, power, absolute value
  * It works with both positive and negative integers
+ *
+ * Change log:
+ * 2020930  xactant42 Updated to also support binary AND, OR, and XOR binary operations.
  */
 
 !(function() {
@@ -419,6 +422,12 @@
     /**********************************************************************
     * Begin binary operations
     **********************************************************************/
+
+    /**
+    * Performs a binary AND operations between this and number.
+    * @param number - value to perform binary operation against.
+    * @return BigNumber
+    */
     BigNumber.prototype.binaryAnd = function (number) {
       var result;
 
@@ -437,6 +446,11 @@
       return result;
     }
 
+    /**
+    * Performs a binary OR operations between this and number.
+    * @param number - value to perform binary operations against.
+    * @return BigNumber
+    */
     BigNumber.prototype.binaryOr = function (number) {
       var result;
 
@@ -455,6 +469,11 @@
       return result;
     }
 
+    /**
+    * Performs a binary XOR operations between this and number.
+    * @param number - value to perform binary operations against.
+    * @return BigNumber
+    */
     BigNumber.prototype.binaryXor = function (number) {
       var result;
 
@@ -473,6 +492,13 @@
       return result;
     }
 
+    /**
+    * Execute binary operation represented by f between a and b.
+    * @param a - left operand.
+    * @param b - right operand.
+    * @param f - function that performs operation.
+    * @return BigNumber
+    */
     BigNumber._binaryCompare = function(a,b, f) {
       var index;
       var x;
@@ -482,10 +508,12 @@
       var raw = [];
       var result;
 
+      // Convert operands into binary form.
       x = BigNumber._toBinary(a);
       y = BigNumber._toBinary(b);
       length = Math.max(x.length, y.length);
 
+      // Left pad the binary values with 0s.
       x = BigNumber._leftPadArray(x, 0, length);
       y = BigNumber._leftPadArray(y, 0, length);
 
@@ -493,12 +521,17 @@
         raw.push (f(x[index],y[index]));
       }
 
+      // Convert the binary result to a base 10 decimal number.
       result = BigNumber._binaryToDecimal(raw);
 
       return result;
     }
 
-
+    /**
+    * Converts value to a binary form BigNumber.
+    * @param bn - BigNumber that will be converted to binary.
+    * @return Array
+    */
     BigNumber._toBinary = function (bn) {
       var index;
       var remainder = 0;
@@ -513,6 +546,11 @@
       return raw.reverse();
     }
 
+    /**
+    * Converts a binary form BigNumber to base 10.
+    * @param ba - BigNumber that will be converted to decimal.
+    * @return BigNumber
+    */
     BigNumber._binaryToDecimal = function (ba) {
       var index = 0;
       var a = ba.reverse();
@@ -533,6 +571,13 @@
       return rsp;
     }
 
+    /**
+    * Left pads array with val if arr length less than size.
+    * @param arr - array to adjust.
+    * @param val - value to padd array with.
+    * @param size - trigger length.
+    * @return Array
+    */
     BigNumber._leftPadArray = function(arr, val, size) {
       if (arr.length < size) {
         arr = arr.reverse();

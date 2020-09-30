@@ -13,13 +13,14 @@
     "big-number",
     "bignumbers",
     "arithmetic",
+    "binary",
     "operations"
   ],
-  "author": "Alex Bardas <alex.bardas+github@gmail.com>",
+  "author": "Alex Bardas <alex.bardas+github@gmail.com> forked by Xactant 42 <xactant@gmail.com>",
   "main": "./index",
   "repository": {
     "type": "git",
-    "url": "git@github.com:alexbardas/bignumber.js.git"
+    "url": "git@github.com/xactant/bignumber.js"
   },
   "scripts": {
     "test": "mocha test/",
