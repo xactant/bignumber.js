@@ -3,6 +3,30 @@ require('should');
 var BigNumber = require('../');
 
 describe('BigNumber.js', function() {
+    describe('#binaryAnd', function () {
+      it('should test binaryAnd between two numbers', function() {
+        BigNumber(1234).binaryAnd(0xffff).val().should.equal('1234');
+        BigNumber(93).binaryAnd(115).val().should.equal('81');
+        BigNumber(10).binaryAnd(5).val().should.equal('0');
+      });
+    });
+
+    describe('#binaryor', function () {
+      it('should test binaryOr between two numbers', function() {
+        BigNumber(1234).binaryOr(0xffff).val().should.equal('65535');
+        BigNumber(93).binaryOr(115).val().should.equal('127');
+        BigNumber(10).binaryOr(5).val().should.equal('15');
+      });
+    });
+
+    describe('#binaryxor', function () {
+      it('should test binaryXor between two numbers', function() {
+        BigNumber(1234).binaryXor(0xffff).val().should.equal('64301');
+        BigNumber(93).binaryXor(115).val().should.equal('46');
+        BigNumber(10).binaryXor(5).val().should.equal('15');
+      });
+    });
+
     describe('#initialization', function() {
         it('should create a big number from a number', function() {
             BigNumber(0).val().should.equal('0');

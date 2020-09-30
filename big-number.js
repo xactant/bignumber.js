@@ -415,6 +415,139 @@
         return (this.sign > 0) ? str : ('-' + str);
     };
 
+
+    /**********************************************************************
+    * Begin binary operations
+    **********************************************************************/
+    BigNumber.prototype.binaryAnd = function (number) {
+      var result;
+
+      if (typeof number === 'undefined') {
+          return this;
+      }
+
+      result = BigNumber._binaryCompare(this.val(), number, function(x,y) {
+        if (x === 1 && y === 1) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      return result;
+    }
+
+    BigNumber.prototype.binaryOr = function (number) {
+      var result;
+
+      if (typeof number === 'undefined') {
+          return this;
+      }
+
+      result = BigNumber._binaryCompare(this.val(), number, function(x,y) {
+        if (x === 1 || y === 1) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      return result;
+    }
+
+    BigNumber.prototype.binaryXor = function (number) {
+      var result;
+
+      if (typeof number === 'undefined') {
+          return this;
+      }
+
+      result = BigNumber._binaryCompare(this.val(), number, function(x,y) {
+        if (x != y) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      return result;
+    }
+
+    BigNumber._binaryCompare = function(a,b, f) {
+      var index;
+      var x;
+      var y;
+      var length;
+      var bigNumber;
+      var raw = [];
+      var result;
+
+      x = BigNumber._toBinary(a);
+      y = BigNumber._toBinary(b);
+      length = Math.max(x.length, y.length);
+
+      x = BigNumber._leftPadArray(x, 0, length);
+      y = BigNumber._leftPadArray(y, 0, length);
+
+      for (index = 0; index < length; index++) {
+        raw.push (f(x[index],y[index]));
+      }
+
+      result = BigNumber._binaryToDecimal(raw);
+
+      return result;
+    }
+
+
+    BigNumber._toBinary = function (bn) {
+      var index;
+      var remainder = 0;
+      var n = new BigNumber(bn);
+      var raw = [];
+
+      while (n.gt(0)) {
+        var r = n.mod(2);
+        raw.push(parseInt(r.toString()));
+      }
+
+      return raw.reverse();
+    }
+
+    BigNumber._binaryToDecimal = function (ba) {
+      var index = 0;
+      var a = ba.reverse();
+      var rsp = new BigNumber(0);
+
+      for (index = 0; index < ba.length; index++) {
+        if (a[index] > 0) {
+          if (index == 0) {
+            rsp = rsp.add(1);
+          }
+          else {
+            var n = 2**index;
+            rsp = rsp.add(n);
+          }
+        }
+      }
+
+      return rsp;
+    }
+
+    BigNumber._leftPadArray = function(arr, val, size) {
+      if (arr.length < size) {
+        arr = arr.reverse();
+
+        while(arr.length < size) arr.push(val);
+
+        arr = arr.reverse();
+      }
+
+      return arr;
+    }
+    /**********************************************************************
+    * End binary operations
+    **********************************************************************/
+
     // Use shorcuts for functions names
     BigNumber.prototype.plus = BigNumber.prototype.add;
     BigNumber.prototype.minus = BigNumber.prototype.subtract;
