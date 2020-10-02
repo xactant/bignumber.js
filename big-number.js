@@ -92,7 +92,7 @@
         // The initial number can be an array, string, number of another big number
         // e.g. array     : [3,2,1], ['+',3,2,1], ['-',3,2,1]
         //      number    : 312
-        //      string    : '321', '+321', -321'
+        //      string    : '321', '+321', -321', '0xDEADBEEF'
         //      BigNumber : BigNumber(321)
         // Every character except the first must be a digit
 
@@ -116,7 +116,6 @@
             if (initialNumber.charAt(0) === '0' && initialNumber.charAt(1) === 'x') {
               // Convert HEX to a base 10 BigNumber.
               initialNumber = hexToDecimal(initialNumber).toString();
-              console.log("initialNumber is now: " + initialNumber);
             }
             // Not HEX
             else if (initialNumber.charAt(0) === '-' || initialNumber.charAt(0) === '+') {

@@ -325,6 +325,7 @@ describe('BigNumber.js', function() {
         BigNumber(1234).binaryAnd(0xffff).val().should.equal('1234');
         BigNumber(93).binaryAnd(115).val().should.equal('81');
         BigNumber(10).binaryAnd(5).val().should.equal('0');
+        BigNumber(57005).binaryAnd(48879).val().should.equal('40621');
       });
     });
 
@@ -333,6 +334,7 @@ describe('BigNumber.js', function() {
         BigNumber(1234).binaryOr(0xffff).val().should.equal('65535');
         BigNumber(93).binaryOr(115).val().should.equal('127');
         BigNumber(10).binaryOr(5).val().should.equal('15');
+        BigNumber(57005).binaryOr(48879).val().should.equal('65263');
       });
     });
 
@@ -341,6 +343,7 @@ describe('BigNumber.js', function() {
         BigNumber(1234).binaryXor(0xffff).val().should.equal('64301');
         BigNumber(93).binaryXor(115).val().should.equal('46');
         BigNumber(10).binaryXor(5).val().should.equal('15');
+        BigNumber("0xDEAD").binaryXor(48879).val().should.equal('24642');
       });
     });
 
