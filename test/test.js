@@ -3,30 +3,6 @@ require('should');
 var BigNumber = require('../');
 
 describe('BigNumber.js', function() {
-    describe('#binaryAnd', function () {
-      it('should test binaryAnd between two numbers', function() {
-        BigNumber(1234).binaryAnd(0xffff).val().should.equal('1234');
-        BigNumber(93).binaryAnd(115).val().should.equal('81');
-        BigNumber(10).binaryAnd(5).val().should.equal('0');
-      });
-    });
-
-    describe('#binaryor', function () {
-      it('should test binaryOr between two numbers', function() {
-        BigNumber(1234).binaryOr(0xffff).val().should.equal('65535');
-        BigNumber(93).binaryOr(115).val().should.equal('127');
-        BigNumber(10).binaryOr(5).val().should.equal('15');
-      });
-    });
-
-    describe('#binaryxor', function () {
-      it('should test binaryXor between two numbers', function() {
-        BigNumber(1234).binaryXor(0xffff).val().should.equal('64301');
-        BigNumber(93).binaryXor(115).val().should.equal('46');
-        BigNumber(10).binaryXor(5).val().should.equal('15');
-      });
-    });
-
     describe('#initialization', function() {
         it('should create a big number from a number', function() {
             BigNumber(0).val().should.equal('0');
@@ -47,6 +23,11 @@ describe('BigNumber.js', function() {
             BigNumber('517').val().should.equal('517');
             BigNumber('+517').val().should.equal('517');
             BigNumber('-517').val().should.equal('-517');
+        });
+
+        it('should create a bignumber from a hex string', function () {
+          BigNumber("0xDEADBEEF").val().should.equal('3735928559');
+          BigNumber("0xF000000000000000").val().should.equal('17293822569102704640');
         });
 
         it('should create a big number from another big number', function() {
@@ -338,4 +319,29 @@ describe('BigNumber.js', function() {
             BigNumber(5).plus(97).minus(53).plus(434).multiply(5435423).add(321453).multiply(21).div(2).val().should.equal('27569123001');
         });
     });
+
+    describe('#binaryAnd', function () {
+      it('should test binaryAnd between two numbers', function() {
+        BigNumber(1234).binaryAnd(0xffff).val().should.equal('1234');
+        BigNumber(93).binaryAnd(115).val().should.equal('81');
+        BigNumber(10).binaryAnd(5).val().should.equal('0');
+      });
+    });
+
+    describe('#binaryor', function () {
+      it('should test binaryOr between two numbers', function() {
+        BigNumber(1234).binaryOr(0xffff).val().should.equal('65535');
+        BigNumber(93).binaryOr(115).val().should.equal('127');
+        BigNumber(10).binaryOr(5).val().should.equal('15');
+      });
+    });
+
+    describe('#binaryxor', function () {
+      it('should test binaryXor between two numbers', function() {
+        BigNumber(1234).binaryXor(0xffff).val().should.equal('64301');
+        BigNumber(93).binaryXor(115).val().should.equal('46');
+        BigNumber(10).binaryXor(5).val().should.equal('15');
+      });
+    });
+
 });

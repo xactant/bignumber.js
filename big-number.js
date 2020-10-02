@@ -46,6 +46,31 @@
         });
     };
 
+    var hexToDecimal = function (hex) {
+      var rsp = new BigNumber(0);
+
+      // string '0x' from front of hex if present.
+      if (hex.charAt(0) === '0' && hex.charAt(1) === 'x') {
+        hex = hex.substring(2);
+      }
+
+      // Create char array
+      var arr = Array.from(hex);
+
+      // Reverse array
+      arr = arr.reverse();
+
+      for (var i = 0; i < arr.length; i++) {
+        var multiple = (new BigNumber(16)).power(i);
+        var decimalValue = parseInt(arr[i], 16);
+        var val = (new BigNumber(decimalValue)).multiply(multiple);
+
+        rsp.add(val);
+      }
+
+      return rsp;
+    }
+
     var errors = {
         'invalid': 'Invalid Number',
         'division by zero': 'Invalid Number - Division By Zero'
@@ -87,7 +112,14 @@
             }
         } else {
             initialNumber = initialNumber.toString();
-            if (initialNumber.charAt(0) === '-' || initialNumber.charAt(0) === '+') {
+            // Check for HEX
+            if (initialNumber.charAt(0) === '0' && initialNumber.charAt(1) === 'x') {
+              // Convert HEX to a base 10 BigNumber.
+              initialNumber = hexToDecimal(initialNumber).toString();
+              console.log("initialNumber is now: " + initialNumber);
+            }
+            // Not HEX
+            else if (initialNumber.charAt(0) === '-' || initialNumber.charAt(0) === '+') {
                 this.sign = initialNumber.charAt(0) === '+' ? 1 : -1;
                 initialNumber = initialNumber.substring(1);
             }
