@@ -449,6 +449,29 @@
         return (this.sign > 0) ? str : ('-' + str);
     };
 
+    // this.number.toHex() - converts number to a hexidecimal string.
+    BigNumber.prototype.toHex = function() {
+        var digits = '0123456789ABCDEF';
+        var result = '';
+        var div = new BigNumber(this);
+
+        while (div.gt(15)) {
+            var r = (new BigNumber(div)).mod(16);
+            var ans = new BigNumber(div);
+
+            result = digits[r] + result;
+
+            if (r.gt(0)) {
+                ans = ans.subtract(r);    
+            }
+
+            div = ans.div(16);
+        }
+
+        result = digits[div] + result;
+
+        return result;
+    };
 
     /**********************************************************************
     * Begin binary operations
@@ -593,7 +616,7 @@
             rsp = rsp.add(1);
           }
           else {
-            var n = 2**index;
+            var n = (new BigNumber(2)).power(index);
             rsp = rsp.add(n);
           }
         }

@@ -28,6 +28,8 @@ describe('BigNumber.js', function() {
         it('should create a bignumber from a hex string', function () {
           BigNumber("0xDEADBEEF").val().should.equal('3735928559');
           BigNumber("0xF000000000000000").val().should.equal('17293822569102704640');
+          BigNumber("0xFFFFFFFFFFFFFFFF").val().should.equal('18446744073709551615');
+          BigNumber("0xD3E1015AC600B04").val().should.equal('954217856321456900');
         });
 
         it('should create a big number from another big number', function() {
@@ -55,6 +57,9 @@ describe('BigNumber.js', function() {
             BigNumber([5, 2, 's', 9]).val().should.equal('Invalid Number');
             BigNumber('5s17').val().should.equal('Invalid Number');
             BigNumber([5,'s',1,7]).val().should.equal('Invalid Number');
+            // Add bad hex values
+            BigNumber(['0xF FAD']).val().should.equal('Invalid Number');
+            BigNumber(['0xFOOP']).val().should.equal('Invalid Number');
         });
     });
 
@@ -326,6 +331,10 @@ describe('BigNumber.js', function() {
         BigNumber(93).binaryAnd(115).val().should.equal('81');
         BigNumber(10).binaryAnd(5).val().should.equal('0');
         BigNumber(57005).binaryAnd(48879).val().should.equal('40621');
+//        console.log("x - 0x1111111111111111: " + new BigNumber("0x1111111111111111"));
+//        console.log("y - 0xffffffffffffffff: " + new BigNumber("0xffffffffffffffff").val());
+//        console.log("x&y: " + JSON.stringify((new BigNumber("0x1111111111111111").binaryAnd("0xffffffffffffffff"))));
+        BigNumber("0x1111111111111111").binaryAnd(new BigNumber("0xffffffffffffffff")).val().should.equal(new BigNumber("1229782938247303441").val());
       });
     });
 
@@ -338,12 +347,17 @@ describe('BigNumber.js', function() {
       });
     });
 
-    describe('#binaryxor', function () {
-      it('should test binaryXor between two numbers', function() {
-        BigNumber(1234).binaryXor(0xffff).val().should.equal('64301');
-        BigNumber(93).binaryXor(115).val().should.equal('46');
-        BigNumber(10).binaryXor(5).val().should.equal('15');
-        BigNumber("0xDEAD").binaryXor(48879).val().should.equal('24642');
+    describe('#tohex', function () {
+      it('should test returning number as hex', function() {
+        BigNumber(1234).toHex().should.equal('4D2');
+        BigNumber(93).toHex().should.equal('5D');
+        BigNumber(10).toHex().should.equal('A');
+        BigNumber(16).toHex().should.equal('10');
+        BigNumber(255).toHex().should.equal('FF');
+        BigNumber("0xDEAD").toHex().should.equal('DEAD');
+        BigNumber("9742670134").toHex().should.equal('244B55936');
+        BigNumber("954217856321456900").toHex().should.equal('D3E1015AC600B04');
+
       });
     });
 
