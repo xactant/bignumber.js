@@ -1,15 +1,15 @@
 ## BigNumber.js
 
-[![Build Status](https://secure.travis-ci.org/alexbardas/bignumber.js.png)](http://travis-ci.org/alexbardas/bignumber.js)
-
-Forked from alexbardas/bignumber.js to add handling for binary operators
+Forked from alexbardas/bignumber.js (http://alexbardas.github.io/bignumber.js/) to add handling for binary operators and HEX values.
 
 BigNumber.js is a light javascript library for node.js and the browser. It supports arithmetic operations on Big Integers.
 
 It is build with performance in mind, uses the fastest algorithms and supports all basic arithmetic operations
 (+, -, *, /, %, ^, abs). Works with both positive and negative big integers.
 
-: (http://alexbardas.github.io/bignumber.js/)
+: (http://xactant.github.io/bignumber.js/)
+
+Support for basic binary operation (AND, OR, XOR) and enable creation of BigNumbers from hex values passed in as strings (i.e. "0xFF" or "0xff" is processed as 255);
 
 Install:
 npm install
@@ -38,7 +38,7 @@ Usage:
 ### API
 
 Supported methods: `add/plus`, `minus/subtract`, `multiply/mult`, `divide/div`, `power/pow`, `mod`, `equals`,
-`lt`, `lte`, `gt`, `gte`, `isZero`, `abs`
+`lt`, `lte`, `gt`, `gte`, `isZero`, `abs`, `binaryAnd`, `bianryOr`, `binaryXor`
 
 ###### Addition
 ```javascript
@@ -73,4 +73,19 @@ Supported methods: `add/plus`, `minus/subtract`, `multiply/mult`, `divide/div`, 
 ```javascript
 	BigNumber(2).power(10); // or
 	BigNumber(2).pow(10);
+```
+
+###### Binary AND
+```javascript
+	BigNumber(57005).binaryAnd(48879) // 40621
+```
+
+###### Binary OR
+```javascript
+	BigNumber(57005).binaryOr(48879) // 65263
+```
+
+###### Binary XOR
+```javascript
+	BigNumber("0xDEAD").binaryXor(48879) // 24642
 ```

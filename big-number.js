@@ -6,6 +6,9 @@
  * It supports the following operations:
  *      addition, subtraction, multiplication, division, power, absolute value
  * It works with both positive and negative integers
+ *
+ * Change log:
+ * 2020930  xactant42 Updated to also support binary AND, OR, and XOR binary operations.
  */
 
 !(function() {
@@ -43,6 +46,31 @@
         });
     };
 
+    var hexToDecimal = function (hex) {
+      var rsp = new BigNumber(0);
+
+      // string '0x' from front of hex if present.
+      if (hex.charAt(0) === '0' && hex.charAt(1) === 'x') {
+        hex = hex.substring(2);
+      }
+
+      // Create char array
+      var arr = Array.from(hex);
+
+      // Reverse array
+      arr = arr.reverse();
+
+      for (var i = 0; i < arr.length; i++) {
+        var multiple = (new BigNumber(16)).power(i);
+        var decimalValue = parseInt(arr[i], 16);
+        var val = (new BigNumber(decimalValue)).multiply(multiple);
+
+        rsp.add(val);
+      }
+
+      return rsp;
+    }
+
     var errors = {
         'invalid': 'Invalid Number',
         'division by zero': 'Invalid Number - Division By Zero'
@@ -64,7 +92,7 @@
         // The initial number can be an array, string, number of another big number
         // e.g. array     : [3,2,1], ['+',3,2,1], ['-',3,2,1]
         //      number    : 312
-        //      string    : '321', '+321', -321'
+        //      string    : '321', '+321', -321', '0xDEADBEEF'
         //      BigNumber : BigNumber(321)
         // Every character except the first must be a digit
 
@@ -84,7 +112,13 @@
             }
         } else {
             initialNumber = initialNumber.toString();
-            if (initialNumber.charAt(0) === '-' || initialNumber.charAt(0) === '+') {
+            // Check for HEX
+            if (initialNumber.charAt(0) === '0' && initialNumber.charAt(1) === 'x') {
+              // Convert HEX to a base 10 BigNumber.
+              initialNumber = hexToDecimal(initialNumber).toString();
+            }
+            // Not HEX
+            else if (initialNumber.charAt(0) === '-' || initialNumber.charAt(0) === '+') {
                 this.sign = initialNumber.charAt(0) === '+' ? 1 : -1;
                 initialNumber = initialNumber.substring(1);
             }
@@ -414,6 +448,204 @@
 
         return (this.sign > 0) ? str : ('-' + str);
     };
+
+    // this.number.toHex() - converts number to a hexidecimal string.
+    BigNumber.prototype.toHex = function() {
+        var digits = '0123456789ABCDEF';
+        var result = '';
+        var div = new BigNumber(this);
+
+        while (div.gt(15)) {
+            var r = (new BigNumber(div)).mod(16);
+            var ans = new BigNumber(div);
+
+            result = digits[r] + result;
+
+            if (r.gt(0)) {
+                ans = ans.subtract(r);    
+            }
+
+            div = ans.div(16);
+        }
+
+        result = digits[div] + result;
+
+        return result;
+    };
+
+    /**********************************************************************
+    * Begin binary operations
+    **********************************************************************/
+
+    /**
+    * Performs a binary AND operations between this and number.
+    * @param number - value to perform binary operation against.
+    * @return BigNumber
+    */
+    BigNumber.prototype.binaryAnd = function (number) {
+      var result;
+
+      if (typeof number === 'undefined') {
+          return this;
+      }
+
+      result = BigNumber._binaryCompare(this.val(), number, function(x,y) {
+        if (x === 1 && y === 1) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      return result;
+    }
+
+    /**
+    * Performs a binary OR operations between this and number.
+    * @param number - value to perform binary operations against.
+    * @return BigNumber
+    */
+    BigNumber.prototype.binaryOr = function (number) {
+      var result;
+
+      if (typeof number === 'undefined') {
+          return this;
+      }
+
+      result = BigNumber._binaryCompare(this.val(), number, function(x,y) {
+        if (x === 1 || y === 1) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      return result;
+    }
+
+    /**
+    * Performs a binary XOR operations between this and number.
+    * @param number - value to perform binary operations against.
+    * @return BigNumber
+    */
+    BigNumber.prototype.binaryXor = function (number) {
+      var result;
+
+      if (typeof number === 'undefined') {
+          return this;
+      }
+
+      result = BigNumber._binaryCompare(this.val(), number, function(x,y) {
+        if (x != y) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      return result;
+    }
+
+    /**
+    * Execute binary operation represented by f between a and b.
+    * @param a - left operand.
+    * @param b - right operand.
+    * @param f - function that performs operation.
+    * @return BigNumber
+    */
+    BigNumber._binaryCompare = function(a,b, f) {
+      var index;
+      var x;
+      var y;
+      var length;
+      var bigNumber;
+      var raw = [];
+      var result;
+
+      // Convert operands into binary form.
+      x = BigNumber._toBinary(a);
+      y = BigNumber._toBinary(b);
+      length = Math.max(x.length, y.length);
+
+      // Left pad the binary values with 0s.
+      x = BigNumber._leftPadArray(x, 0, length);
+      y = BigNumber._leftPadArray(y, 0, length);
+
+      for (index = 0; index < length; index++) {
+        raw.push (f(x[index],y[index]));
+      }
+
+      // Convert the binary result to a base 10 decimal number.
+      result = BigNumber._binaryToDecimal(raw);
+
+      return result;
+    }
+
+    /**
+    * Converts value to a binary form BigNumber.
+    * @param bn - BigNumber that will be converted to binary.
+    * @return Array
+    */
+    BigNumber._toBinary = function (bn) {
+      var index;
+      var remainder = 0;
+      var n = new BigNumber(bn);
+      var raw = [];
+
+      while (n.gt(0)) {
+        var r = n.mod(2);
+        raw.push(parseInt(r.toString()));
+      }
+
+      return raw.reverse();
+    }
+
+    /**
+    * Converts a binary form BigNumber to base 10.
+    * @param ba - BigNumber that will be converted to decimal.
+    * @return BigNumber
+    */
+    BigNumber._binaryToDecimal = function (ba) {
+      var index = 0;
+      var a = ba.reverse();
+      var rsp = new BigNumber(0);
+
+      for (index = 0; index < ba.length; index++) {
+        if (a[index] > 0) {
+          if (index == 0) {
+            rsp = rsp.add(1);
+          }
+          else {
+            var n = (new BigNumber(2)).power(index);
+            rsp = rsp.add(n);
+          }
+        }
+      }
+
+      return rsp;
+    }
+
+    /**
+    * Left pads array with val if arr length less than size.
+    * @param arr - array to adjust.
+    * @param val - value to padd array with.
+    * @param size - trigger length.
+    * @return Array
+    */
+    BigNumber._leftPadArray = function(arr, val, size) {
+      if (arr.length < size) {
+        arr = arr.reverse();
+
+        while(arr.length < size) arr.push(val);
+
+        arr = arr.reverse();
+      }
+
+      return arr;
+    }
+    /**********************************************************************
+    * End binary operations
+    **********************************************************************/
 
     // Use shorcuts for functions names
     BigNumber.prototype.plus = BigNumber.prototype.add;

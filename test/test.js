@@ -25,6 +25,13 @@ describe('BigNumber.js', function() {
             BigNumber('-517').val().should.equal('-517');
         });
 
+        it('should create a bignumber from a hex string', function () {
+          BigNumber("0xDEADBEEF").val().should.equal('3735928559');
+          BigNumber("0xF000000000000000").val().should.equal('17293822569102704640');
+          BigNumber("0xFFFFFFFFFFFFFFFF").val().should.equal('18446744073709551615');
+          BigNumber("0xD3E1015AC600B04").val().should.equal('954217856321456900');
+        });
+
         it('should create a big number from another big number', function() {
             BigNumber(BigNumber(0)).val().should.equal('0');
             BigNumber(BigNumber(517)).val().should.equal('517');
@@ -50,6 +57,9 @@ describe('BigNumber.js', function() {
             BigNumber([5, 2, 's', 9]).val().should.equal('Invalid Number');
             BigNumber('5s17').val().should.equal('Invalid Number');
             BigNumber([5,'s',1,7]).val().should.equal('Invalid Number');
+            // Add bad hex values
+            BigNumber(['0xF FAD']).val().should.equal('Invalid Number');
+            BigNumber(['0xFOOP']).val().should.equal('Invalid Number');
         });
     });
 
@@ -314,4 +324,41 @@ describe('BigNumber.js', function() {
             BigNumber(5).plus(97).minus(53).plus(434).multiply(5435423).add(321453).multiply(21).div(2).val().should.equal('27569123001');
         });
     });
+
+    describe('#binaryAnd', function () {
+      it('should test binaryAnd between two numbers', function() {
+        BigNumber(1234).binaryAnd(0xffff).val().should.equal('1234');
+        BigNumber(93).binaryAnd(115).val().should.equal('81');
+        BigNumber(10).binaryAnd(5).val().should.equal('0');
+        BigNumber(57005).binaryAnd(48879).val().should.equal('40621');
+//        console.log("x - 0x1111111111111111: " + new BigNumber("0x1111111111111111"));
+//        console.log("y - 0xffffffffffffffff: " + new BigNumber("0xffffffffffffffff").val());
+//        console.log("x&y: " + JSON.stringify((new BigNumber("0x1111111111111111").binaryAnd("0xffffffffffffffff"))));
+        BigNumber("0x1111111111111111").binaryAnd(new BigNumber("0xffffffffffffffff")).val().should.equal(new BigNumber("1229782938247303441").val());
+      });
+    });
+
+    describe('#binaryor', function () {
+      it('should test binaryOr between two numbers', function() {
+        BigNumber(1234).binaryOr(0xffff).val().should.equal('65535');
+        BigNumber(93).binaryOr(115).val().should.equal('127');
+        BigNumber(10).binaryOr(5).val().should.equal('15');
+        BigNumber(57005).binaryOr(48879).val().should.equal('65263');
+      });
+    });
+
+    describe('#tohex', function () {
+      it('should test returning number as hex', function() {
+        BigNumber(1234).toHex().should.equal('4D2');
+        BigNumber(93).toHex().should.equal('5D');
+        BigNumber(10).toHex().should.equal('A');
+        BigNumber(16).toHex().should.equal('10');
+        BigNumber(255).toHex().should.equal('FF');
+        BigNumber("0xDEAD").toHex().should.equal('DEAD');
+        BigNumber("9742670134").toHex().should.equal('244B55936');
+        BigNumber("954217856321456900").toHex().should.equal('D3E1015AC600B04');
+
+      });
+    });
+
 });
